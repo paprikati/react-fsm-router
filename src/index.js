@@ -1,8 +1,8 @@
-import parsePath from 'parse-path';
+const parsePath = require('parse-path').default;
 // TODO actual integration with xstate driven by options{xstate:true}
 // TODO add guards
 // TODO exception handling for invalid strings (default to initial route) rather than erroring
-export default function Router(fsm, transitions, options) {
+module.exports = function(fsm, transitions, options) {
     let initialRoute = getInitialRoute(fsm);
     let parsedURL = parsePath(window.location.href);
 
@@ -20,7 +20,7 @@ export default function Router(fsm, transitions, options) {
         transition: function(transitionKey, args, cb) {
             // update the history
             this.vals.history.push(this.vals.path);
-            //change the state
+            // change the state
             this.vals.route = getNewRoute(
                 transitionKey,
                 this.vals.route,
@@ -66,12 +66,18 @@ export default function Router(fsm, transitions, options) {
         getHistory: function() {
             return this.vals.history;
         },
+        clearHistory: function(){
+            this.vals.history = [];
+            return;
+        },
         getQueryMap: function() {
             return this.vals.queryMap;
         },
         clearQueryMap: function() {
-            console.log('clear query map');
             this.vals.queryMap = {};
+        },
+        setQueryMap: function(delta){
+            this.vals.queryMap = Object.assign(this.vals.queryMap, delta);
         }
     };
 
@@ -94,7 +100,7 @@ export default function Router(fsm, transitions, options) {
     }
 
     return router;
-}
+};
 
 function getInitialRoute(sm, current = []) {
     if (!sm.initial) {

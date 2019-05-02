@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Frame from './Frame';
-// import Router from 'react-fsm-router';
-import Router from './router';
+import Router from 'react-fsm-router';
+// import Router from './router';
 import routing from './routing';
 
 let ourRouter = new Router(routing.fsm, routing.transitions);

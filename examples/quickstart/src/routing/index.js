@@ -31,13 +31,13 @@ const transitions = {
     TOGGLE: function({ args, router }, cb) {
         console.log('toggling');
         console.log(router);
-        if (router) {
-            router.clearQueryMap();
-        }
+        router.clearQueryMap();
         cb();
     },
     CHANGE_PART: function({ args, router }, cb) {
         console.log('changing part');
+        console.log(router);
+        router.setQueryMap({color:'red'})
         cb();
     }
 };

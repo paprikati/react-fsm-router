@@ -85,5 +85,14 @@ There are a few methods available on the `Router` object:
 * `getRoute` returns an array of strings representing the route (e.g. `['section1','part1']`)
 * `getState` returns the route in xstate form (e.g. `section1.part1`)
 * `getHistory` returns an array of arrays, where each array represents a route the user has gone to
+* `clearHistory` clears the history
 * `getQueryMap` returns the query map (e.g. `{id:'123'}`)
 * `clearQueryMap` clears the query map
+* `setQueryMap` sets the query map (as a delta) - if you want to explicitly clear it you can give it `{key:undefined}`
+* `vals` contains the raw data controlling the router. It is not recommended to use or manipulate this directly.
+
+## Behaviour
+
+If you use the baseURL of your application, the router will redirect to the URL of your initial state.
+If you use a specific URL which maps to a particular state, the router will call the transitions required to get from the initial state to that state, in order, asynchronously. Note that args will be undefined. It will also auto-complete the initial state (e.g. `/section1` in the example will redirect to `/section1/part1`).
+The querystring at the end of the URL will be maintained unless you explicitly clear it using `clearQueryMap`.
