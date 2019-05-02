@@ -64,6 +64,26 @@ const transitions = {
 };
 ```
 
+### Initialise the Router
 
-define your router
+import the Router and initialise using the fsm and transitions objects:
 
+```
+import Router from 'react-fsm-router';
+let myRouter = new Router(fsm, transitions);
+```
+
+you can trigger a transition by calling
+
+```
+router.transition('TOGGLE');
+```
+
+## Router API
+
+There are a few methods available on the `Router` object:
+* `getRoute` returns an array of strings representing the route (e.g. `['section1','part1']`)
+* `getState` returns the route in xstate form (e.g. `section1.part1`)
+* `getHistory` returns an array of arrays, where each array represents a route the user has gone to
+* `getQueryMap` returns the query map (e.g. `{id:'123'}`)
+* `clearQueryMap` clears the query map
