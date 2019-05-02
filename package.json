@@ -1,6 +1,6 @@
 {
     "name": "react-fsm-router",
-    "version": "0.0.3",
+    "version": "0.0.4",
     "description": "using statecharts concepts to build a react router",
     "main": "./src/index.js",
     "repository": {
@@ -19,5 +19,8 @@
     "bugs": {
         "url": "https://github.com/paprikati/react-fsm-router/issues"
     },
-    "homepage": "https://github.com/paprikati/react-fsm-router#readme"
+    "homepage": "https://github.com/paprikati/react-fsm-router#readme",
+    "dependencies": {
+        "parse-path": "^4.0.1"
+    }
 }
