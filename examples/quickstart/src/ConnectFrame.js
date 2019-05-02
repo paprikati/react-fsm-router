@@ -11,9 +11,9 @@ export default class ConnectFrame extends Component {
         this.state = { router: ourRouter };
         this.transition = this.transition.bind(this);
     }
-    transition(str, ...args) {
-        this.setState({
-            router: this.state.router.transition(str, ...args)
+    transition(str, args) {
+        this.state.router.transition(str, args, router => {
+            this.setState({ router });
         });
     }
 

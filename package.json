@@ -1,23 +1,23 @@
 {
-  "name": "react-fsm-router",
-  "version": "0.0.1",
-  "description": "using statecharts concepts to build a react router",
-  "main": "./src/index.js",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/paprikati/react-fsm-router.git"
-  },
-  "keywords": [
-    "react",
-    "react-router",
-    "router",
-    "fsm",
-    "statechart"
-  ],
-  "author": "paprikati",
-  "license": "GNU GPLv3",
-  "bugs": {
-    "url": "https://github.com/paprikati/react-fsm-router/issues"
-  },
-  "homepage": "https://github.com/paprikati/react-fsm-router#readme"
+    "name": "react-fsm-router",
+    "version": "0.0.2",
+    "description": "using statecharts concepts to build a react router",
+    "main": "./src/index.js",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/paprikati/react-fsm-router.git"
+    },
+    "keywords": [
+        "react",
+        "react-router",
+        "router",
+        "fsm",
+        "statechart"
+    ],
+    "author": "paprikati",
+    "license": "GNU GPLv3",
+    "bugs": {
+        "url": "https://github.com/paprikati/react-fsm-router/issues"
+    },
+    "homepage": "https://github.com/paprikati/react-fsm-router#readme"
 }

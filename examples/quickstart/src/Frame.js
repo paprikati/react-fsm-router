@@ -15,7 +15,10 @@ export default class Frame extends Component {
                         onClick={() => this.props.transition('CHANGE_PART')}>
                         Change Part
                     </button>
-                    <Section1 part={router.getRoute()[1]} />
+                    <Section1
+                        color={router.getQueryMap().color}
+                        part={router.getRoute()[1]}
+                    />
                 </div>
             ) : (
                 <Section2 />

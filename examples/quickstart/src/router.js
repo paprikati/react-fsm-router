@@ -1,9 +1,12 @@
 import parsePath from 'parse-path';
 // TODO actual integration with xstate driven by options{xstate:true}
 // TODO add guards
+// TODO exception handling for invalid strings (default to initial route) rather than erroring
+// TODO querystrings
 export default function Router(fsm, transitions, options) {
     let initialRoute = getInitialRoute(fsm);
     let parsedURL = parsePath(window.location.href);
+    console.log(parsedURL);
     let parsedPath = parsedURL.pathname.split('/');
     // remove initial /
     parsedPath.splice(0, 1);
@@ -17,7 +20,9 @@ export default function Router(fsm, transitions, options) {
     }
     if ('pushState' in window.history) {
         console.log(initialRoute.join('/'));
-        let newURL = `${getBaseURL(parsedURL.href)}/${initialRoute.join('/')}`;
+        let newURL = `${getBaseURL(parsedURL.href)}/${initialRoute.join('/')}${
+            parsedURL.search ? `?${parsedURL.search}` : ''
+        }`;
         window.history.pushState({}, '', newURL);
     }
 
@@ -30,9 +35,9 @@ export default function Router(fsm, transitions, options) {
             state: initialRoute.join('.'),
             route: initialRoute,
             history: [], // array of arrays where each array is a nested path
-            queryMap: {} // object representing the current querystring
+            queryMap: parsedURL.query // object representing the current querystring
         },
-        transition: function(transitionKey, ...args) {
+        transition: function(transitionKey, args, cb) {
             // update the history
             this.vals.history.push(this.vals.path);
             //change the state
@@ -44,17 +49,33 @@ export default function Router(fsm, transitions, options) {
             this.vals.state = this.vals.route.join('.');
 
             // call the transition
-            this.config.transitions[transitionKey](args);
+            this.config.transitions[transitionKey](
+                { router: this, args },
+                () => {
+                    // this.vals.queryMap = queryMap;
+                    console.log('in callback');
+                    // update the url
+                    if ('pushState' in window.history) {
+                        let newURL = getBaseURL(parsedURL.href);
+                        if (this.vals.route.length > 0) {
+                            let route = this.vals.route.join('/');
+                            newURL = `${newURL}/${route}`;
+                        }
+                        if (
+                            this.vals.queryMap &&
+                            Object.keys(this.vals.queryMap).length > 0
+                        ) {
+                            let queryString = stringifyQueryMap(
+                                this.vals.queryMap
+                            );
+                            newURL = `${newURL}?${queryString}`;
+                        }
 
-            // update the url
-            if ('pushState' in window.history) {
-                let newURL = `${getBaseURL(
-                    parsedURL.href
-                )}/${this.vals.route.join('/')}`;
-                window.history.pushState({}, '', newURL);
-            }
-
-            return this;
+                        window.history.pushState({}, '', newURL);
+                    }
+                    cb(this);
+                }
+            );
         }, // some function to trigger a transition
         getRoute: function() {
             return this.vals.route;
@@ -67,6 +88,10 @@ export default function Router(fsm, transitions, options) {
         },
         getQueryMap: function() {
             return this.vals.queryMap;
+        },
+        clearQueryMap: function() {
+            console.log('clear query map');
+            this.vals.queryMap = {};
         }
     };
 }
@@ -129,7 +154,7 @@ function walkStateTree(parsedPath, rawFSM, rawTransitions) {
         // find the transition which gets to our bit
         for (let transition in initialFsmLocation.on) {
             if (initialFsmLocation.on[transition] === path) {
-                rawTransitions[transition](); // TODO HANDLE ASYNC
+                rawTransitions[transition]({}, () => {}); // TODO HANDLE ASYNC
                 fsmLocation = fsmLocation.states[path];
                 break;
             }
@@ -137,49 +162,17 @@ function walkStateTree(parsedPath, rawFSM, rawTransitions) {
     }
 }
 
-const fsm = {
-    initial: 'section1',
-    states: {
-        section1: {
-            on: {
-                TOGGLE: 'section2'
-            },
-            initial: 'part1',
-            states: {
-                part1: {
-                    on: {
-                        CHANGE_PART: 'part2'
-                    }
-                },
-                part2: {
-                    on: {
-                        CHANGE_PART: 'part1'
-                    }
-                }
-            }
-        },
-        section2: {
-            on: {
-                TOGGLE: 'section1'
-            }
-        }
-    }
-};
-
-const transitions = {
-    TOGGLE: function(args, cb) {
-        console.log('toggling');
-        cb();
-    },
-    CHANGE_PART: function(ars, cb) {
-        console.log('changing part');
-        cb();
-    }
-};
-
 // TODO fix so this works when youre in a subdomain
 function getBaseURL(href) {
     let arr = href.split('/');
     let ourArr = arr.splice(0, 3);
     return ourArr.join('/');
+}
+
+function stringifyQueryMap(map) {
+    const ret = [];
+    for (let d in map) {
+        ret.push(encodeURIComponent(d) + '=' + encodeURIComponent(map[d]));
+    }
+    return ret.join('&');
 }

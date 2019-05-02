@@ -28,13 +28,17 @@ const fsm = {
 };
 
 const transitions = {
-    TOGGLE: function(args, cb) {
+    TOGGLE: function({ args, router }, cb) {
         console.log('toggling');
-        // cb();
+        console.log(router);
+        if (router) {
+            router.clearQueryMap();
+        }
+        cb();
     },
-    CHANGE_PART: function(ars, cb) {
+    CHANGE_PART: function({ args, router }, cb) {
         console.log('changing part');
-        // cb();
+        cb();
     }
 };
 
