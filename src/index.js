@@ -5,27 +5,8 @@ import parsePath from 'parse-path';
 export default function Router(fsm, transitions, options) {
     let initialRoute = getInitialRoute(fsm);
     let parsedURL = parsePath(window.location.href);
-    console.log(parsedURL);
-    let parsedPath = parsedURL.pathname.split('/');
-    // remove initial /
-    parsedPath.splice(0, 1);
-    // remove final /
 
-    // for each argument in the path, if it doesnt match the initial state, trigger a transition. always give the transition the full router in case its useful
-    if (parsedPath) {
-        initialRoute = parsedPath;
-        initialRoute = getFullInitialRoute(fsm, initialRoute);
-        walkStateTree(parsedPath, fsm, transitions);
-    }
-    if ('pushState' in window.history) {
-        console.log(initialRoute.join('/'));
-        let newURL = `${getBaseURL(parsedURL.href)}/${initialRoute.join('/')}${
-            parsedURL.search ? `?${parsedURL.search}` : ''
-        }`;
-        window.history.pushState({}, '', newURL);
-    }
-
-    return {
+    let router = {
         config: {
             transitions,
             fsm
@@ -93,6 +74,26 @@ export default function Router(fsm, transitions, options) {
             this.vals.queryMap = {};
         }
     };
+
+    let parsedPath = parsedURL.pathname.split('/');
+    // remove initial /
+    parsedPath.splice(0, 1);
+
+    // for each argument in the path, if it doesnt match the initial state, trigger a transition. always give the transition the full router in case its useful
+    if (parsedPath) {
+        initialRoute = parsedPath;
+        initialRoute = getFullInitialRoute(fsm, initialRoute);
+        walkStateTree(parsedPath, fsm, transitions, router);
+    }
+    if ('pushState' in window.history) {
+        console.log(initialRoute.join('/'));
+        let newURL = `${getBaseURL(parsedURL.href)}/${initialRoute.join('/')}${
+            parsedURL.search ? `?${parsedURL.search}` : ''
+        }`;
+        window.history.pushState({}, '', newURL);
+    }
+
+    return router;
 }
 
 function getInitialRoute(sm, current = []) {
@@ -135,7 +136,7 @@ function getNewRoute(transitionKey, currentStatePath, configFSM) {
         newRoute.push(stateKey);
     }
 }
-function walkStateTree(parsedPath, rawFSM, rawTransitions) {
+function walkStateTree(parsedPath, rawFSM, rawTransitions, router) {
     let fsmLocation = rawFSM;
 
     for (let path of parsedPath) {
@@ -153,7 +154,7 @@ function walkStateTree(parsedPath, rawFSM, rawTransitions) {
         // find the transition which gets to our bit
         for (let transition in initialFsmLocation.on) {
             if (initialFsmLocation.on[transition] === path) {
-                rawTransitions[transition]({}, () => {}); // TODO HANDLE ASYNC
+                rawTransitions[transition]({ router }, () => {}); // TODO HANDLE ASYNC
                 fsmLocation = fsmLocation.states[path];
                 break;
             }
