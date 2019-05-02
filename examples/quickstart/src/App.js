@@ -1,15 +1,12 @@
 import React from 'react';
-import Section1 from './sections/section1';
+import ConnectFrame from './ConnectFrame';
 
 function App() {
-  console.log('rendering');
-  console.log(window.location.href);
-  return (
-    <div className="App">
-      <button>Toggle</button>
-      <Section1/>
-    </div>
-  );
+    return (
+        <div className="App">
+            <ConnectFrame />
+        </div>
+    );
 }
 
 export default App;

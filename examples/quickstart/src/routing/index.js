@@ -5,16 +5,16 @@ const fsm = {
             on: {
                 TOGGLE: 'section2'
             },
-            initial:'part1',
-            states:{
-                part1:{
-                    on:{
-                        CHANGE_PART:'part2'
+            initial: 'part1',
+            states: {
+                part1: {
+                    on: {
+                        CHANGE_PART: 'part2'
                     }
                 },
-                part2:{
-                    on:{
-                        CHANGE_PART:'part1'
+                part2: {
+                    on: {
+                        CHANGE_PART: 'part1'
                     }
                 }
             }
@@ -28,14 +28,14 @@ const fsm = {
 };
 
 const transitions = {
-    TOGGLE: function(args, cb){
+    TOGGLE: function(args, cb) {
         console.log('toggling');
-        cb();
+        // cb();
     },
-    CHANGE_PART:function(ars,cb){
+    CHANGE_PART: function(ars, cb) {
         console.log('changing part');
-        cb();
+        // cb();
     }
 };
 
-module.exports = {fsm, transitions};
+module.exports = { fsm, transitions };
