@@ -29,14 +29,12 @@ const fsm = {
 
 const transitions = {
     TOGGLE: function({ args, router }, cb) {
-        console.log('toggling');
-        console.log(router);
         router.clearQueryMap();
         cb();
     },
     CHANGE_PART: function({ args, router }, cb) {
-        console.log('changing part');
-        console.log(router);
+        console.log('about to set qmap');
+        console.log(router.getQueryMap());
         router.setQueryMap({color:'red'})
         cb();
     }

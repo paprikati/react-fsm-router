@@ -6,9 +6,42 @@ This project is in its very early stages! Feature requests are definitely welcom
 
 ## Quick Start
 
-Clone the repo to look at the quickstart example
+Clone the repo to look at the quickstart example. Alternatively:
 
-To build a router, you need an fsm (finite state machine) and a list of transitions.
+### Usage
+
+install
+```
+npm install react-fsm-router
+```
+
+import the component:
+```js
+import Router from 'react-fsm-router';
+```
+
+Wrap your application code inside the `Router`.
+You must give the router an `fsm` (finite state machine) and set of `transitions` (see below)
+```jsx
+<Router
+    fsm={fsm}
+    transitions={transitions}
+    fallback={<div>loading</div>}
+    >
+    <Frame/>
+</Router>
+```
+
+These components (only at the top level) will be passed a prop `router` (see full API definition below). Trigger a transition by calling `router.TRANSITION`.
+```jsx
+<Button onClick={() => this.props.router.TRANSITION('TOGGLE')}
+```
+
+You can access the current route (i.e. to render different pages) via `router.getRoute()`
+```jsx
+let route = router.getRoute();
+return route[0] === 'view' ? <View/> : <Edit/>
+```
 
 ### FSM
 as per xstate - you can use the xstate viz tool to help build these. It currently only supports the simple syntax as shown below.
@@ -64,32 +97,18 @@ const transitions = {
 };
 ```
 
-### Initialise the Router
-
-import the Router and initialise using the fsm and transitions objects:
-
-```
-import Router from 'react-fsm-router';
-let myRouter = new Router(fsm, transitions);
-```
-
-you can trigger a transition by calling
-
-```
-router.transition('TOGGLE');
-```
-
 ## Router API
 
-There are a few methods available on the `Router` object:
+The component `Router` will pass an object `router` to its direct children, with the following methods:
+* `TRANSITION` triggers a transition arguments `(args, callback)`
 * `getRoute` returns an array of strings representing the route (e.g. `['section1','part1']`)
-* `getState` returns the route in xstate form (e.g. `section1.part1`)
 * `getHistory` returns an array of arrays, where each array represents a route the user has gone to
 * `clearHistory` clears the history
 * `getQueryMap` returns the query map (e.g. `{id:'123'}`)
 * `clearQueryMap` clears the query map
 * `setQueryMap` sets the query map (as a delta) - if you want to explicitly clear it you can give it `{key:undefined}`
-* `vals` contains the raw data controlling the router. It is not recommended to use or manipulate this directly.
+
+All the setters and clearers take a final argument as a callback if you need to confirm the state change has occurred before continuing.
 
 ## Behaviour
 
