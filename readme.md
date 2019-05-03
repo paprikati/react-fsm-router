@@ -78,10 +78,10 @@ const fsm = {
 
 ### Transitions
 Each transition must have a unique key. The transitions receive two arguments:
-* {router, args}
+* `{router, args}`
   * router is the current state of the router
-  * args are what was passed as the second argument to router.transition. This will always be undefined if a transition is called when initialising your app for the first time (i.e. someone has navigated directly to that state via a URL)
-* callback - a callback that must be called to end the transition
+  * args are what was passed as the second argument to `router.TRANSITION`. This will always be undefined if a transition is called when initialising your app for the first time (i.e. someone has navigated directly to that state via a URL)
+* `callback` - a callback that must be called to end the transition
 
 ```
 const transitions = {
